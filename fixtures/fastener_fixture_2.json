@@ -1,7 +1,7 @@
 {
   "name": "metric_imperial_mismatch_rejected_for_exact_equivalence",
   "source_profile": {
-    "family": "bolt",
+    "fastener_family": "bolt",
     "nominal_unit_system": "imperial",
     "diameter": "1/4 in",
     "thread_standard": "UNC",
@@ -12,7 +12,7 @@
   "candidate": {
     "vendor": "Candidate Metric",
     "attributes": {
-      "family": "bolt",
+      "fastener_family": "bolt",
       "nominal_unit_system": "metric",
       "diameter": "M6",
       "thread_standard": "metric",

@@ -10,7 +10,7 @@
     "match_mode": "exact_preferred_substitutes_allowed"
   },
   "source_profile": {
-    "family": "bolt",
+    "fastener_family": "bolt",
     "nominal_unit_system": "imperial",
     "diameter": "1/4 in",
     "thread_standard": "UNC",
@@ -27,7 +27,7 @@
       "source_tier": "preferred",
       "listing_url": "https://example.com/a",
       "attributes": {
-        "family": "bolt",
+        "fastener_family": "bolt",
         "nominal_unit_system": "imperial",
         "diameter": "1/4 in",
         "thread_standard": "UNC",
@@ -56,7 +56,7 @@
       "source_tier": "broader",
       "listing_url": "https://example.com/b",
       "attributes": {
-        "family": "bolt",
+        "fastener_family": "bolt",
         "nominal_unit_system": "imperial",
         "diameter": "1/4 in",
         "thread_standard": "UNC",
