@@ -1,0 +1,24 @@
+{
+  "name": "moq_requested_quantity_cost_math",
+  "source_request": {
+    "requested_quantity": 6,
+    "match_mode": "exact_only"
+  },
+  "candidates": [
+    {
+      "vendor": "MOQ10",
+      "moq": 10,
+      "delivered_total": 30.0
+    },
+    {
+      "vendor": "MOQ6",
+      "moq": 6,
+      "delivered_total": 21.0
+    }
+  ],
+  "expected_behavior": {
+    "MOQ10_effective_unit_cost": 5.0,
+    "MOQ6_effective_unit_cost": 3.5,
+    "top_result_vendor": "MOQ6"
+  }
+}
