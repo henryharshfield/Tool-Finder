@@ -1,5 +1,7 @@
 # Prototype Part Sourcing Tool — Codex Starter Pack v2
 
+`AGENTS.md` and `V1_RULES.md` are the primary implementation guardrails for Codex and should be treated as the source of truth for v1 behavior.
+
 Use this starter pack together with:
 - `prototype_part_sourcing_agent_design_brief.pdf`
 - `codex_build_brief_part_sourcing_tool_v3.pdf`
