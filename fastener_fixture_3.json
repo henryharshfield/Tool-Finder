@@ -1,0 +1,28 @@
+{
+  "name": "deadline_grouping_125_percent_rule",
+  "source_request": {
+    "requested_quantity": 10,
+    "today": "2026-03-01",
+    "needed_by_date": "2026-03-10",
+    "match_mode": "exact_only"
+  },
+  "candidates": [
+    {
+      "vendor": "OnTime",
+      "estimated_arrival_date": "2026-03-09"
+    },
+    {
+      "vendor": "SlightMiss",
+      "estimated_arrival_date": "2026-03-12"
+    },
+    {
+      "vendor": "FutureOption",
+      "estimated_arrival_date": "2026-03-15"
+    }
+  ],
+  "expected_behavior": {
+    "OnTime": "deadline_feasible",
+    "SlightMiss": "slight_miss",
+    "FutureOption": "future_option_only"
+  }
+}
