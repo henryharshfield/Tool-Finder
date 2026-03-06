@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from collections import defaultdict
-
 from tool_finder.schemas import DeadlineStatus, EvaluatedCandidate, MatchType, RankedResults, TrustTier
 from tool_finder.vendor_trust import low_trust_override_allowed
 
@@ -14,49 +12,72 @@ _MATCH_RANK = {
 
 _TRUST_RANK = {TrustTier.HIGH: 0, TrustTier.MEDIUM: 1, TrustTier.LOW: 2}
 
+_TRUST_PENALTY = 10_000.0
 
-def _base_sort_key(item: EvaluatedCandidate):
+
+def _is_uniquely_deadline_feasible(low_item: EvaluatedCandidate, all_items: list[EvaluatedCandidate]) -> bool:
+    if low_item.deadline_status != DeadlineStatus.DEADLINE_FEASIBLE:
+        return False
+    for other in all_items:
+        if other is low_item:
+            continue
+        if other.match_type != low_item.match_type:
+            continue
+        if other.trust_tier == TrustTier.LOW:
+            continue
+        if other.deadline_status == DeadlineStatus.DEADLINE_FEASIBLE:
+            return False
+    return True
+
+
+def _apply_trust_penalties(items: list[EvaluatedCandidate]) -> None:
+    for item in items:
+        item.ranking_penalty = 0.0
+
+    for low in items:
+        if low.trust_tier != TrustTier.LOW or low.effective_unit_cost is None:
+            continue
+
+        comparable_non_low = [
+            x for x in items if x.match_type == low.match_type and x.trust_tier != TrustTier.LOW and x.effective_unit_cost is not None
+        ]
+        if not comparable_non_low:
+            continue
+
+        best_non_low = min(comparable_non_low, key=lambda x: x.effective_unit_cost)
+        uniquely_feasible = _is_uniquely_deadline_feasible(low, items)
+        if not low_trust_override_allowed(
+            low_trust_unit_cost=low.effective_unit_cost,
+            high_trust_unit_cost=best_non_low.effective_unit_cost,
+            low_trust_uniquely_meets_deadline=uniquely_feasible,
+        ):
+            low.ranking_penalty = _TRUST_PENALTY
+
+
+def _sort_key(item: EvaluatedCandidate):
     arrival = item.candidate.availability.estimated_arrival_date if item.candidate.availability else None
+    effective_with_penalty = (
+        item.effective_unit_cost if item.effective_unit_cost is not None else float("inf")
+    ) + item.ranking_penalty
     return (
         _MATCH_RANK[item.match_type],
-        item.effective_unit_cost if item.effective_unit_cost is not None else float("inf"),
+        effective_with_penalty,
         _TRUST_RANK[item.trust_tier],
         arrival,
     )
 
 
-def _apply_trust_override(items: list[EvaluatedCandidate]) -> list[EvaluatedCandidate]:
-    by_signature: dict[tuple, list[EvaluatedCandidate]] = defaultdict(list)
-    for i in items:
-        signature = (
-            i.match_type,
-            i.deadline_status,
-        )
-        by_signature[signature].append(i)
-
-    output: list[EvaluatedCandidate] = []
-    for group in by_signature.values():
-        highs = [i for i in group if i.trust_tier != TrustTier.LOW and i.effective_unit_cost is not None]
-        lows = [i for i in group if i.trust_tier == TrustTier.LOW and i.effective_unit_cost is not None]
-        if highs and lows:
-            best_high = min(highs, key=lambda x: x.effective_unit_cost)
-            for low in lows:
-                if not low_trust_override_allowed(low.effective_unit_cost, best_high.effective_unit_cost):
-                    low.effective_unit_cost += 10_000
-        output.extend(group)
-    return output
-
-
 def rank_results(items: list[EvaluatedCandidate]) -> RankedResults:
-    adjusted = _apply_trust_override(items)
-    feasible = [i for i in adjusted if i.deadline_status in {None, DeadlineStatus.DEADLINE_FEASIBLE}]
-    missed = [i for i in adjusted if i.deadline_status in {DeadlineStatus.SLIGHT_MISS, DeadlineStatus.FUTURE_OPTION_ONLY}]
+    _apply_trust_penalties(items)
 
-    feasible.sort(key=_base_sort_key)
+    feasible = [i for i in items if i.deadline_status in {None, DeadlineStatus.DEADLINE_FEASIBLE}]
+    missed = [i for i in items if i.deadline_status in {DeadlineStatus.SLIGHT_MISS, DeadlineStatus.FUTURE_OPTION_ONLY}]
+
+    feasible.sort(key=_sort_key)
     missed.sort(
         key=lambda i: (
             0 if i.deadline_status == DeadlineStatus.SLIGHT_MISS else 1,
-            *_base_sort_key(i),
+            *_sort_key(i),
         )
     )
     return RankedResults(deadline_feasible_results=feasible, missed_deadline_results=missed)

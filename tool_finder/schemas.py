@@ -95,6 +95,7 @@ class EvaluatedCandidate:
     matched_fields: list[str] = field(default_factory=list)
     missing_or_unverified_fields: list[str] = field(default_factory=list)
     explanation: str = ""
+    ranking_penalty: float = 0.0
 
 
 @dataclass(slots=True)

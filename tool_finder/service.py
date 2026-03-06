@@ -8,14 +8,7 @@ from tool_finder.explanations import build_explanation
 from tool_finder.match_engine import classify_match
 from tool_finder.profile_builder import build_fastener_profile
 from tool_finder.ranking_engine import rank_results
-from tool_finder.schemas import (
-    Availability,
-    EvaluatedCandidate,
-    MatchMode,
-    Pricing,
-    SourceRequest,
-    TrustTier,
-)
+from tool_finder.schemas import EvaluatedCandidate, MatchMode, SourceRequest, TrustTier
 from tool_finder.supplier_connectors.normalization import normalize_candidate
 
 
@@ -63,7 +56,9 @@ def evaluate_candidates(source_request: SourceRequest, source_profile: dict, raw
             matched_fields=matched,
             missing_or_unverified_fields=missing,
         )
-        item.explanation = build_explanation(item)
         evaluated.append(item)
 
-    return rank_results(evaluated)
+    ranked = rank_results(evaluated)
+    for item in ranked.deadline_feasible_results + ranked.missed_deadline_results:
+        item.explanation = build_explanation(item)
+    return ranked
