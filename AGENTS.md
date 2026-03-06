@@ -24,13 +24,13 @@ Read these files before making changes:
 3. `CONNECTORS.md` — connector architecture and strategy
 4. `TODO_BUILD_ORDER.md` — preferred implementation order
 5. `TEST_CASES.md` — expected behaviors
-6. `fastener_fixture_1.json`
-7. `fastener_fixture_2.json`
-8. `fastener_fixture_3.json`
-9. `fastener_fixture_4.json`
-10. `fastener_fixture_5.json`
-11. `prototype_part_sourcing_agent_design_brief.pdf`
-12. `codex_build_brief_part_sourcing_tool_v3.pdf`
+6. `fixtures/fastener_fixture_1.json`
+7. `fixtures/fastener_fixture_2.json`
+8. `fixtures/fastener_fixture_3.json`
+9. `fixtures/fastener_fixture_4.json`
+10. `fixtures/fastener_fixture_5.json`
+11. `docs/prototype_part_sourcing_agent_design_brief.pdf`
+12. `docs/codex_build_brief_part_sourcing_tool_v3.pdf`
 
 ### Conflict resolution
 If files appear to conflict:
@@ -67,6 +67,7 @@ Do **not** build:
 - browser app
 - authentication
 - production deployment setup
+
 unless explicitly requested later.
 
 ### Exact matching rules
@@ -123,7 +124,6 @@ Otherwise treat it as informational only.
 Build the backend as a **modular Python codebase** with clear separation of concerns.
 
 Preferred structure:
-
 - schemas
 - ontology
 - profile builder
@@ -242,7 +242,6 @@ Do not start with UI or broad connector expansion.
 ## First milestone
 
 The first milestone should produce a backend that can:
-
 - accept a normalized source request
 - build a normalized fastener profile
 - run through configured connectors
