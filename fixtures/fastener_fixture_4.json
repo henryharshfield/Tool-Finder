@@ -1,0 +1,30 @@
+{
+  "name": "trust_override_threshold",
+  "evaluated_candidates": [
+    {
+      "vendor": "HighTrust",
+      "trust_tier": "High",
+      "effective_unit_cost": 4.0,
+      "deadline_status": "deadline_feasible",
+      "match_type": "Exact Spec"
+    },
+    {
+      "vendor": "LowTrust15PctCheaper",
+      "trust_tier": "Low",
+      "effective_unit_cost": 3.4,
+      "deadline_status": "deadline_feasible",
+      "match_type": "Exact Spec"
+    },
+    {
+      "vendor": "LowTrust27PctCheaper",
+      "trust_tier": "Low",
+      "effective_unit_cost": 2.9,
+      "deadline_status": "deadline_feasible",
+      "match_type": "Exact Spec"
+    }
+  ],
+  "expected_behavior": {
+    "HighTrust_beats_LowTrust15PctCheaper": true,
+    "LowTrust27PctCheaper_may_beat_HighTrust": true
+  }
+}
